@@ -4,11 +4,7 @@ ARG INSTALL_COMPONENTS
 RUN apt-get install -qqy \
     gconf-service \
     libatk-bridge2.0-0 \
-    libgconf-2-4 \
-    libgtk-3-0 \
-    libappindicator1 \
-    lsb-release \
-    wget && \
+    lsb-release && \
     cd /home && \
     wget https://github.com/VerusCoin/VerusCoin/releases/download/v0.5.6/Verus-CLI-Linux-v0.5.6.tar.gz && \
     tar -xzf Verus-CLI-Linux-v0.5.6.tar.gz && \
