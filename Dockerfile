@@ -1,4 +1,4 @@
-FROM jmcduffie32/chromium-headless-tests:0.1.1
+FROM jmcduffie32/chromium-headless-tests:0.0.1
 ENV CLOUD_SDK_VERSION 206.0.0
 ARG INSTALL_COMPONENTS
 RUN apt-get install -qqy \
