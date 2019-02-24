@@ -34,6 +34,8 @@ docker  pull davidldawes/agama-builder:latest
 See [the github site](https://github.com/DavidLDawes/agama-builder) or [the hub.docker site](https://cloud.docker.com/u/davidldawes/repository/docker/davidldawes/agama-builder) for instructions on how to build. 
 
 # Testing Agama
+If you want to test Agama using Mocha with headlessly, use the agama-tester container which you can fetch with docker:
+
 docker pull davidldawes/agama-tester:latest
 
-See [the github site](https://github.com/DavidLDawes/agama-builder) or [the hub.docker site](https://cloud.docker.com/u/davidldawes/repository/docker/davidldawes/agama-tester) for instructions on how to run the automated Mocha/Chai tests headlessly.
+See [the github site](https://github.com/DavidLDawes/Agama-Tester) or [the hub.docker site](https://cloud.docker.com/u/davidldawes/repository/docker/davidldawes/agama-tester) for instructions on how to run the automated Mocha/Chai tests headlessly.
