@@ -2,6 +2,8 @@
 Docker Agama builder container with (hopefully a recent) VerusCli file set in the /home directory.
 Derived from jmcduffie32/chromium-headless-tests:0.1.1 on hub.docker.com
 
+        https://img.shields.io/docker/automated/:user/:repo.svg         https://img.shields.io/docker/build/:user/:repo.svg
+
 verus-cli files are komodod, komodo-cli, verus and verusd
 
 This is where the Dockerfile definition is kept. This README is shown both on the [github Dockerfile source](https://github.com/DavidLDawes/Agama-With-VerusCli) and on [Docker Hub](https://cloud.docker.com/u/davidldawes/repository/docker/DavidLDawes/agama-build-with-verus-cli). Updates to the github repository's master branch trigger an automatic buld to the Docker Hub location. 
