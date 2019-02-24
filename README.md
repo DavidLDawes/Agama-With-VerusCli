@@ -1,13 +1,14 @@
 # Agama-With-VerusCli
 Docker Agama builder container with (hopefully a recent) VerusCli file set in the /home directory.
+Derived from jmcduffie32/chromium-headless-tests:0.1.1 on hub.docker.com
 
-VerusCli files are komodod, komodo-cli, verus and verusd
+verus-cli files are komodod, komodo-cli, verus and verusd
 
-This is where the Dockerfile definition is kept. This README is shown both on the [github Dockerfile source](https://github.com/DavidLDawes/Agama-With-VerusCli) and on [Docker Hub](https://cloud.docker.com/u/davidldawes/repository/docker/DavidLDawes/agama-with-tester). Updates to the github repository's master branch trigger an automatic buld to the Docker Hub location. 
+This is where the Dockerfile definition is kept. This README is shown both on the [github Dockerfile source](https://github.com/DavidLDawes/Agama-With-VerusCli) and on [Docker Hub](https://cloud.docker.com/u/davidldawes/repository/docker/DavidLDawes/agama-build-with-verus-cli). Updates to the github repository's master branch trigger an automatic buld to the Docker Hub location. 
 
-This container is used if you want to actually use the Agama container to run the graphical wallet with the komodod peer node. The Agama-Test container is then built on top of this one plus additional modules needed for testing.
+This container is used if you want to actually use the Agama container to test the graphical wallet with the komodod peer node. The Agama-Test container is then built on top of this one plus additional modules needed for testing.
 
-Get the automatically built Docker container definition from [Docker hub](https://hub.docker.com/r/DavidLDawes/agama-with-veruscli) using the tag :latest. The container uses Linux.
+Get the automatically built Docker container definition from [Docker hub](https://hub.docker.com/r/DavidLDawes/Agama-With-VerusCli) using the tag :latest. The container uses Debian Linux.
 
 **Supported Operating Systems**
 * **Linux** 
@@ -20,137 +21,17 @@ The easy to use Agama graphical wallet makes mining, staking and managing coins 
 
 The VerusCoin enhanced Komodo peer runs under the cover to provide peer to peer network support. The wallet handles launching the peer to peer client with the proper options to bring up the VerusCoin chain.
 
+# Usage
+This container is used in the agama-tester container.
+
 # Building Agama
-This container has the required tools and libraries etc. to build the VerusCoin Enhance Agama Wallet. Simply pull the docker image, start it, handle the Electrum dependencies, clone the code, build EasyDEX-GUI, get the daemon files, then build and package Agama.
+If you want to build Agama, use the agama-builder container which you can fetch with docker:
 
-The following sections describe the steps in detail.
+docker  pull davidldawes/agama-builder:latest
 
-## Pulling and Running the Docker Image
-We'll make a directory to hold the results of the build to make it easier to access and pass that into the container using the -v option. The -v command can be skipped if we're simply testing and don't need any access to the test environment once the test is over.
+See [the github site](https://github.com/DavidLDawes/agama-builder) or [the hub.docker site](https://cloud.docker.com/u/davidldawes/repository/docker/davidldawes/agama-builder) for instructions on how to build. 
 
-    virtualsoundnw@U2:~/Agama$ docker pull davidldawes/Agama-Tester:latest
-    latest: Pulling from davidldawes/Agama-Tester
-    5e6ec7f28fb7: Pull complete 
-    fe40c2f302db: Pull complete 
-    dec5ad5a153b: Pull complete 
-    f285a29b16ca: Pull complete 
-    d344692e1f82: Pull complete 
-    Digest: sha256:05764bdf9bbfc4d9dd5838d1a50ee1e04071bc7266623e74dbd1103843d16bd5
-    Status: Downloaded newer image for davidldawes/Agama-Tester:latest
-    virtualsoundnw@U2:~/Agama-builder$ mkdir ~/agama-tester-docker
-    virtualsoundnw@U2:~/Agama-builder$ docker run -v ~/agama-tester-docker:/home -it davidldawes/Agama-Tester:latest /bin/bash
-    root@c8594de5e060:/#
+# Testing Agama
+docker pull davidldawes/agama-tester:latest
 
-## Handle the Electrum Dependencies
-We're now in the root directory of the container. Before going any further let's handle the Electrum dependencies, using npm to install the electron-packager and electron-prebuilt modules.
-
-    root@c8594de5e060:/# npm install electron-packager -g
-    /usr/local/bin/electron-packager -> /usr/local/lib/node_modules/electron-packager/cli.js
-    + electron-packager@13.1.0
-    added 212 packages from 136 contributors in 10.005s
-    root@c8594de5e060:/# npm install electron-prebuilt -g --unsafe-perm=true
-    npm WARN deprecated electron-prebuilt@1.4.13: electron-prebuilt has been renamed to electron. For more details, see http://electron.atom.io/blog/2016/08/16/npm-install-electron
-    /usr/local/bin/electron -> /usr/local/lib/node_modules/electron-prebuilt/cli.js
-    
-    > electron-prebuilt@1.4.13 postinstall /usr/local/lib/node_modules/electron-prebuilt
-    > node install.js
-    
-    + electron-prebuilt@1.4.13
-    added 149 packages from 108 contributors in 8.313s
-    root@c8594de5e060:/# 
-
-That covers the remaining dependencies. We'll switch to the home directory next and use that for our git clone.
-
-## Recursively Clone Agama and EasyDEX-GUI
-Switch to the home directory and use git to recursively clone the Agama and EasyDEX-GUI source
-
-    root@c8594de5e060:/# cd home
-    root@c8594de5e060:/home# git clone https://github.com/veruscoin/Agama --recursive --branch master --single-branch
-    Cloning into 'agama'...
-    remote: Enumerating objects: 27, done.
-    remote: Counting objects: 100% (27/27), done.
-    remote: Compressing objects: 100% (16/16), done.
-    remote: Total 6767 (delta 13), reused 18 (delta 7), pack-reused 6740
-    Receiving objects: 100% (6767/6767), 154.47 MiB | 35.15 MiB/s, done.
-    Resolving deltas: 100% (4399/4399), done.
-    Submodule 'gui/EasyDEX-GUI' (https://github.com/VerusCoin/EasyDEX-GUI.git) registered for path 'gui/EasyDEX-GUI'
-    Cloning into '/home/agama/gui/EasyDEX-GUI'...
-    remote: Enumerating objects: 63, done.
-    remote: Counting objects: 100% (63/63), done.
-    remote: Compressing objects: 100% (47/47), done.
-    remote: Total 19089 (delta 30), reused 35 (delta 16), pack-reused 19026
-    Receiving objects: 100% (19089/19089), 27.70 MiB | 33.06 MiB/s, done.
-    Resolving deltas: 100% (13563/13563), done.
-    Submodule path 'gui/EasyDEX-GUI': checked out 'abf214f1f108db18b14245fc90653058b509e26a'
-    root@c8594de5e060:/home# 
-
-## Build EasyDEX-GUI
-We'll check to make sure we have the latest EasyDEX-GUI code, then use yarn to install it and npm to build it.
-
-### Check/Get Latest EasyDEX-GUI Code
-The simplest way to check and get the latest EasyDEX-GUI code is to do a git pull of the origin's master branch. Changing to the EasyDEX-GUI/react directory, do the git pull:
-
-    root@c8594de5e060:/home/Agama# cd gui/EasyDEX-GUI/react/
-    root@c8594de5e060:/home/Agama/gui/EasyDEX-GUI/react# git pull origin master
-
-Updated files (if any) are listed, otherwise a message saying all is up to date is displayed. Either way, we are now up to date.
-
-### Use Yarn To Install Dependencies
-Use yarn to install the EasyDEX-GUI react code
-
-    root@c8594de5e060:/home/Agama/gui/EasyDEX-GUI/react# yarn install
-    yarn install v1.12.3
-    (warnings and info skipped)
-    Done in 32.38s.
-    root@c8594de5e060:/home/Agama/gui/EasyDEX-GUI/react# 
-
-### Use npm To Build EasyDEX-GUI
-The final step in building EasyDEX-GUI use npm:
-
-    root@c8594de5e060:/home/Agama/gui/EasyDEX-GUI/react# npm run build
-
-Skipping the output, as long as you do not get any errors then it succeeded. Review the output to make sure there are no errors.
-
-### Get the Daemon Files
-You need to get the komodod peer node daemon and komodo-cli to include with the VerusCoin enhanced Agama Wallet and place them in the proper directories before running or packaging the graphical wallet.
-
-Get back up to the Agama directory and make the needed resources subdirectory:
-
-    root@c8594de5e060:/home/Agama/gui/EasyDEX-GUI/react# cd ../../..
-    root@c8594de5e060:/home/Agama# mkdir -p resources/app/assets/bin/linux64/verusd
-    root@c8594de5e060:/home/Agama# 
-
-We need the current VerusCli build as a tar.gz. We can get that from the VerusCoin web site using wget. Go to the web site at veruscoin.io and copy the URL from the Linux Command Line button/box. The URL changes with each release, currently it's 
-
-    https://github.com/VerusCoin/VerusCoin/releases/download/v0.5.6/Verus-CLI-Linux-v0.5.6.tar.gz
-
-So we can use that in a wget:
-
-    root@c8594de5e060:/home/Agama# wget https://github.com/VerusCoin/VerusCoin/releases/download/v0.5.6/Verus-CLI-Linux-v0.5.6.tar.gz
-    --2019-02-21 06:02:32--  https://github.com/VerusCoin/VerusCoin/releases/download/v0.5.6/Verus-CLI-Linux-v0.5.6.tar.gz
-    Resolving github.com (github.com)... 192.30.255.113, 192.30.255.112
-    <snip>
-    2019-02-21 06:02:34 (8.44 MB/s) - 'Verus-CLI-Linux-v0.5.6.tar.gz' saved [11119973/11119973]
-    
-    root@c8594de5e060:/home/Agama# 
-
-Now extract the tar contents and copy them into place:
-
-    root@c8594de5e060:/home/Agama# tar -xzf Verus-CLI-Linux-v0.5.6.tar.gz 
-    root@c8594de5e060:/home/Agama# cp verus-cli/komodo* resources/app/assets/bin/linux64/verusd/
-    root@c8594de5e060:/home/Agama# cp verus-cli/verus* resources/app/assets/bin/linux64/verusd/
-    root@c8594de5e060:/home/Agama# 
-
-Now we're ready to build Agama using npm.
-
-### Build Agama
-Build Agama using npm install:
-
-    root@c8594de5e060:/home/Agama# npm install 
-
-As long as you don't get errors, you can continue. 
-
-
-# Automated Testing For Agama
-Use the Agama-Test container (which is built on this onbe) to test Agama using Mocha/Chai on a headless browser.
-
+See [the github site](https://github.com/DavidLDawes/agama-builder) or [the hub.docker site](https://cloud.docker.com/u/davidldawes/repository/docker/davidldawes/agama-tester) for instructions on how to run the automated Mocha/Chai tests headlessly.

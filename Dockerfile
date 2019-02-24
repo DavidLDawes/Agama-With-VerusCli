@@ -1,8 +1,13 @@
-FROM asherd/agama-builder:latest
+FROM jmcduffie32/chromium-headless-tests:0.1.1
 ENV CLOUD_SDK_VERSION 206.0.0
 ARG INSTALL_COMPONENTS
 RUN apt-get install -qqy \
-    chromium \
+    gconf-service \
+    libatk-bridge2.0-0 \
+    libgconf-2-4 \
+    libgtk-3-0 \
+    libappindicator1 \
+    lsb-release \
     wget && \
     cd /home && \
     wget https://github.com/VerusCoin/VerusCoin/releases/download/v0.5.6/Verus-CLI-Linux-v0.5.6.tar.gz && \
